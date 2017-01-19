@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+
+  <script
+  src="https://code.jquery.com/jquery-3.1.1.js"
+  integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+  crossorigin="anonymous"></script>
+
+
+</head>
+<body>
+
+<h1>Dashboard</h1>
+<div id="user"></div>
+<div id="email"></div>
+
+<input type="text" id="query" name="Search" placeholder="Search For Music...">
+<button id="search">Search Track</button>
+
+<ul id="tracks"></ul>
+
+<script type="text/javascript">
+  var spotifyToken = window.location.hash.split('&')[0].split('=')[1];
+  console.log('token', spotifyToken);
+
+  $.ajax({
+    method: 'GET',
+    url: 'https://api.spotify.com/v1/me',
+    headers: {
+      Authorization: 'Bearer ' + spotifyToken
+    }
+  }).done(function(data) {
+    console.log('data', data);
+    $('#user').text(data.display_name);
+    $('#email').text(data.email);
+  });
+
+  $('#search').on('click', function() {
+    $.ajax({
+      method: 'GET',
+      url: 'https://api.spotify.com/v1/search',
+      data: {
+        q: $('#query').val(),
+        type: 'track'
+      },
+      headers: {
+        Authorization: 'Bearer ' + spotifyToken
+      }
+    }).done(function(data) {
+      console.log('data', data);
+      var tracks = data.tracks.items.map(track => `<li>${track.name} <a href=${track.uri}>Play</a> <button class="add-to-playlist" data-uri="${track.uri}">Add To Playlist</button></li>`).join('\n');
+      $("#tracks").html(tracks);
+      console.log(tracks);
+    });    
+  });
+
+  $(document).on('click', '.add-to-playlist', function(event) {
+    var uri = $(this).data('uri');
+    console.log('uri', uri);
+    $.ajax({
+      method: 'POST',
+      url: 'https://api.spotify.com/v1/users/122571961/playlists/0zcrv3jFfvWR6xon5TXivZ/tracks?uris=' + encodeURIComponent([uri]),
+      headers: {
+        Authorization: 'Bearer ' + spotifyToken,
+      }
+    }).done(function(data) {
+      console.log('data', data);
+      alert('added!');
+    }); 
+
+    
+  })
+
+  
+</script>
+</body>
+</html>

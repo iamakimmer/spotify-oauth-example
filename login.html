@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+  <button id="login">Login With Spotify</button>
+
+
+  <script type="text/javascript">
+
+    var client_id = '30e7bb265a0e44c9a31c81cbb56fa80b';
+    var redirect_uri = 'http://localhost:8080/dashboard.html';
+    var scopes = 'playlist-read-private user-read-private user-read-email playlist-modify-private playlist-modify-public';
+    
+
+    var button = document.querySelector('#login');
+    
+    button.addEventListener('click', function(event) {
+      var url =  `https://accounts.spotify.com/authorize?client_id=${client_id}&response_type=token&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${encodeURIComponent(scopes)}`;
+
+      console.log('url', url);
+      debugger;
+      window.location.href = url;
+
+    })
+    
+  </script>
+
+
+</body>
+</html>
