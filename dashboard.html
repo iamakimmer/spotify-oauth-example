@@ -189,6 +189,7 @@
       var uri = $(this).data('uri');
       $.ajax({
         method: 'POST',
+        contentType: "application/json",
         url: 'https://6mw9y37eg4.execute-api.us-east-1.amazonaws.com/prod/add-track',
         dataType: 'json',
         data: {
