@@ -1,29 +1,99 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title></title>
+  <title>Rutgers Bootcamp Playlist</title>
+  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style type="text/css">
+  body {
+    font-family: 'Roboto', sans-serif;
+    color: #fff;
+  }
+  a, a:visited {
+    color: #fff;
+  }
 
-  <script
-  src="https://code.jquery.com/jquery-3.1.1.js"
-  integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
-  crossorigin="anonymous"></script>
+  ul#tracks > li {
+    cursor: pointer;
+  }
 
+  ul#tracks > li .add-to-playlist {
+    display: none;
+  }
 
+  ul#tracks > li:hover .add-to-playlist {
+    display: inline-block;
+  }
+
+  .player-col {
+    padding: 0 0 !important;
+  }
+  #user {
+    font-size: 4rem;
+  }
+
+  #spotifyplayer {
+    height: 100vh;
+  }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+  <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
-<body>
 
-<h1>Dashboard</h1>
-<div id="user"></div>
-<div id="email"></div>
+<body class="teal">
+  <div class="">
 
-<input type="text" id="query" name="Search" placeholder="Search For Music...">
-<button id="search">Search Track</button>
+    <!-- Page Layout here -->
+    <div class="row">
 
-<ul id="tracks"></ul>
+      <div class="col s8 teal ">
+        <h2>Rutgers Bootcamp</h2>
+        <h4>Add Your Fav When Coding</h4>
 
-<script type="text/javascript">
-  var spotifyToken = window.location.hash.split('&')[0].split('=')[1];
-  console.log('token', spotifyToken);
+        <div class="card-panel teal lighten-5 z-depth-4">
+          <div class="row valign-wrapper">
+            <div class="col s2" >
+              <img src="" id="userimg" alt="" class="circle responsive-img z-depth-3">
+            </div>
+            <div class="col s10">
+              <span class="black-text" id="user">
+              </span>
+            </div>
+          </div>
+        </div>
+
+
+        
+        <form>
+          <input type="text" id="query" name="Search" placeholder="Search For Music..." required>
+          <button type="submit" id="search" class="waves-effect waves-light btn">Search</button>          
+        </form>
+
+        <ul id="tracks"></ul>
+      </div>
+      <div class="col s4 teal lighten-5" style="padding: 0;">
+        <!-- <iframe id="spotifyplayer" src="https://embed.spotify.com/?uri=spotify%3Auser%3A122571961%3Aplaylist%3A0zcrv3jFfvWR6xon5TXivZ" width="300px" height="380px" frameborder="0" allowtransparency="true"></iframe>    -->     
+        <iframe id="spotifyplayer" src="https://embed.spotify.com/?uri=spotify%3Auser%3A122571961%3Aplaylist%3A0zcrv3jFfvWR6xon5TXivZ&theme=white" width="100%"  frameborder="0" allowtransparency="true"></iframe>
+      </div>
+
+    </div>
+            
+   
+
+    
+  </div>
+  <script type="text/javascript">
+  var spotifyToken;
+
+  try {
+    spotifyToken = window.location.hash.split('&')[0].split('=')[1];
+  } catch (e) {
+    window.location.href = 'login.html';
+  }
+
+
 
   $.ajax({
     method: 'GET',
@@ -34,10 +104,11 @@
   }).done(function(data) {
     console.log('data', data);
     $('#user').text(data.display_name);
-    $('#email').text(data.email);
+    $('#userimg').attr('src', data.images[0].url);
   });
 
-  $('#search').on('click', function() {
+  $('#search').on('click', function(event) {
+    event.preventDefault();
     $.ajax({
       method: 'GET',
       url: 'https://api.spotify.com/v1/search',
@@ -50,15 +121,18 @@
       }
     }).done(function(data) {
       console.log('data', data);
-      var tracks = data.tracks.items.map(track => `<li>${track.name} <a href=${track.uri}>Play</a> <button class="add-to-playlist" data-uri="${track.uri}">Add To Playlist</button></li>`).join('\n');
+      var tracks = data.tracks.items.map(track => `
+        <li>
+            <a class="play" href=${track.uri}><i class="tiny material-icons">play_arrow</i></a>
+            <span>${track.name} <i class="tiny material-icons add-to-playlist" data-uri="${track.uri}"">add</i></span>            
+        </li>`).join('\n');
       $("#tracks").html(tracks);
       console.log(tracks);
-    });    
+    });
   });
 
   $(document).on('click', '.add-to-playlist', function(event) {
     var uri = $(this).data('uri');
-    console.log('uri', uri);
     $.ajax({
       method: 'POST',
       url: 'https://api.spotify.com/v1/users/122571961/playlists/0zcrv3jFfvWR6xon5TXivZ/tracks?uris=' + encodeURIComponent([uri]),
@@ -66,14 +140,13 @@
         Authorization: 'Bearer ' + spotifyToken,
       }
     }).done(function(data) {
-      console.log('data', data);
-      alert('added!');
-    }); 
+      alert('Added! It might take min to refresh the playlist. Or just refresh after a min.');
+      $('#spotifyplayer').attr('src', $('#spotifyplayer').attr('src'));
+    });
 
-    
+
   })
-
-  
-</script>
+  </script>
 </body>
+
 </html>
