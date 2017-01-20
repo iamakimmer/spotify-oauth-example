@@ -191,11 +191,9 @@
       $.ajax({
         method: 'POST',
         url: 'https://6mw9y37eg4.execute-api.us-east-1.amazonaws.com/prod/add-track',
-        body: {
+        dataType: 'json',
+        data: {
           uri: encodeURIComponent(uri)
-        },
-        headers: {
-          Authorization: 'Bearer ' + spotifyToken,
         }
       }).done(function(data) {
         Materialize.toast('Added! It might take min to refresh the playlist. Or just refresh after a min.', 4000)
