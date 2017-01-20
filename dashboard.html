@@ -93,7 +93,11 @@
   try {
     spotifyToken = window.location.hash.split('&')[0].split('=')[1];
   } catch (e) {
-    window.location.href = 'login.html';
+
+  }
+
+  if (!spotifyToken) {
+    window.location.href= 'login.html';
   }
 
   $.ajax({
