@@ -11,13 +11,13 @@
 
     var client_id = '30e7bb265a0e44c9a31c81cbb56fa80b';
     var redirect_uri = 'https://iamakimmer.github.io/spotify-oauth-example/dashboard.html';
-    var scopes = 'playlist-read-private user-read-private user-read-email playlist-modify-private playlist-modify-public';
+    var scopes = 'playlist-read-private user-read-private playlist-modify-public user-top-read';
     
 
     var button = document.querySelector('#login');
     
     button.addEventListener('click', function(event) {
-      var url =  `https://accounts.spotify.com/authorize?client_id=${client_id}&response_type=token&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${encodeURIComponent(scopes)}`;
+      var url =  `https://accounts.spotify.com/authorize?client_id=${client_id}&response_type=token&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${encodeURIComponent(scopes)}&show_dialog=true`;
       console.log('url', url);
       window.location.href = url;
 
