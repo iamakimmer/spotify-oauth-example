@@ -132,7 +132,10 @@
       Materialize.toast(`Welcome ${data.display_name}! Here's your most played tracks. Why don't you add them to the Rutgers Playlist? Or search for your favorite songs`, 5000);
 
       $('#user').text(data.display_name);
-      $('#userimg').attr('src', data.images[0].url);
+      if (data.images && data.images.length) {
+        $('#userimg').attr('src', data.images[0].url);  
+      }
+      
     });
 
     function renderArtist(artists) {
@@ -187,7 +190,10 @@
       var uri = $(this).data('uri');
       $.ajax({
         method: 'POST',
-        url: 'https://api.spotify.com/v1/users/122571961/playlists/0zcrv3jFfvWR6xon5TXivZ/tracks?uris=' + encodeURIComponent([uri]),
+        url: 'https://6mw9y37eg4.execute-api.us-east-1.amazonaws.com/prod/add-track',
+        body: {
+          uri: encodeURIComponent(uri)
+        },
         headers: {
           Authorization: 'Bearer ' + spotifyToken,
         }
@@ -195,9 +201,7 @@
         Materialize.toast('Added! It might take min to refresh the playlist. Or just refresh after a min.', 4000)
         $('#spotifyplayer').attr('src', $('#spotifyplayer').attr('src'));
       });
-
-
-    })
+    });
   })
   </script>
 </body>
