@@ -53,7 +53,6 @@
       <li><a class="btn-floating red tooltipped" data-delay="25" data-position="top" id="btn-follow" data-tooltip="Follow Playlist"><i class="material-icons">add</i></a></li>
       <li><a class="btn-floating blue tooltipped" data-delay="25" data-position="top" data-tooltip="Github Repo" href="https://github.com/iamakimmer/spotify-oauth-example"><i class="material-icons">attach_file</i></a></li>
       <li><a class="btn-floating yellow darken-1 tooltipped" data-delay="25" data-position="top" data-tooltip="Logout" href="login.html"><i class="material-icons">cancel</i></a></li>
-      
     </ul>
   </div>
   <div class="">
@@ -133,9 +132,9 @@
 
       $('#user').text(data.display_name);
       if (data.images && data.images.length) {
-        $('#userimg').attr('src', data.images[0].url);  
+        $('#userimg').attr('src', data.images[0].url);
       }
-      
+
     });
 
     function renderArtist(artists) {
@@ -194,10 +193,11 @@
         dataType: 'json',
         data: {
           uri: uri
+        },
+        success: function() {
+          Materialize.toast('Added! It might take min to refresh the playlist. Or just refresh after a min.', 4000)
+          $('#spotifyplayer').attr('src', $('#spotifyplayer').attr('src'));
         }
-      }, success: function() {
-        Materialize.toast('Added! It might take min to refresh the playlist. Or just refresh after a min.', 4000)
-        $('#spotifyplayer').attr('src', $('#spotifyplayer').attr('src'));        
       })
     });
   })
