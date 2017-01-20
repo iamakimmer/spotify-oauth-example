@@ -193,12 +193,12 @@
         url: 'https://6mw9y37eg4.execute-api.us-east-1.amazonaws.com/prod/add-track',
         dataType: 'json',
         data: {
-          uri: encodeURIComponent(uri)
+          uri: uri
         }
-      }).done(function(data) {
+      }, success: function() {
         Materialize.toast('Added! It might take min to refresh the playlist. Or just refresh after a min.', 4000)
-        $('#spotifyplayer').attr('src', $('#spotifyplayer').attr('src'));
-      });
+        $('#spotifyplayer').attr('src', $('#spotifyplayer').attr('src'));        
+      })
     });
   })
   </script>
