@@ -4,35 +4,36 @@
 <head>
   <title>Rutgers Bootcamp Playlist</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <style type="text/css"> 
+  <style type="text/css">
   body {
     font-family: 'Roboto', sans-serif;
     color: #fff;
   }
-  a, a:visited {
+  
+  a,
+  a:visited {
     color: #fff;
   }
-
+  
   ul.tracklist > li {
-    opacity: 0;    
+    opacity: 0;
     cursor: pointer;
   }
-
+  
   ul.tracklist > li .add-to-playlist {
     display: none;
   }
-
+  
   ul.tracklist > li:hover .add-to-playlist {
     display: inline-block;
   }
-
+  
   .player-col {
     padding: 0 0 !important;
   }
-  #user {
-    
-  }
-
+  
+  #user {}
+  
   #spotifyplayer {
     height: 100vh;
   }
@@ -44,167 +45,157 @@
 </head>
 
 <body class="teal">
-
   <div class="fixed-action-btn horizontal">
     <a class="btn-floating btn-large red">
       <i class="large material-icons">settings</i>
     </a>
     <ul>
-      <li><a class="btn-floating red tooltipped" data-delay="25" data-position="top" id="btn-follow"  data-tooltip="Follow Playlist"><i class="material-icons">add</i></a></li>
+      <li><a class="btn-floating red tooltipped" data-delay="25" data-position="top" id="btn-follow" data-tooltip="Follow Playlist"><i class="material-icons">add</i></a></li>
       <li><a class="btn-floating yellow darken-1 tooltipped" data-delay="25" data-position="top" data-tooltip="Logout" href="login.html"><i class="material-icons">cancel</i></a></li>
     </ul>
   </div>
-
-
   <div class="">
-
     <!-- Page Layout here -->
     <div class="row">
-
       <div class="col s8 teal ">
         <h4 id="playlist-name">Rutgers Bootcamp</h4>
-        
         <form>
           <input type="text" id="query" name="Search" placeholder="Search For Music..." required>
-          <button type="submit" id="search" class="waves-effect waves-light btn">Search</button>          
+          <button type="submit" id="search" class="waves-effect waves-light btn">Search</button>
         </form>
-
         <ul class="tracklist" id="tracks"></ul>
-
         <h5><span id="user"></span>'s Top Tracks</h5>
-
         <ul class="tracklist" id="top"></ul>
-
       </div>
       <div class="col s4 teal lighten-5" style="padding: 0;">
-        <!-- <iframe id="spotifyplayer" src="https://embed.spotify.com/?uri=spotify%3Auser%3A122571961%3Aplaylist%3A0zcrv3jFfvWR6xon5TXivZ" width="300px" height="380px" frameborder="0" allowtransparency="true"></iframe>    -->     
-        <iframe id="spotifyplayer" src="https://embed.spotify.com/?uri=spotify%3Auser%3A122571961%3Aplaylist%3A0zcrv3jFfvWR6xon5TXivZ&theme=white" width="100%"  frameborder="0" allowtransparency="true"></iframe>
+        <!-- <iframe id="spotifyplayer" src="https://embed.spotify.com/?uri=spotify%3Auser%3A122571961%3Aplaylist%3A0zcrv3jFfvWR6xon5TXivZ" width="300px" height="380px" frameborder="0" allowtransparency="true"></iframe>    -->
+        <iframe id="spotifyplayer" src="https://embed.spotify.com/?uri=spotify%3Auser%3A122571961%3Aplaylist%3A0zcrv3jFfvWR6xon5TXivZ&theme=white" width="100%" frameborder="0" allowtransparency="true"></iframe>
       </div>
-
     </div>
-            
-   
-
-    
   </div>
   <script type="text/javascript">
-  var spotifyToken;
+  $(document).ready(function() {
 
-  try {
-    spotifyToken = window.location.hash.split('&')[0].split('=')[1];
-  } catch (e) {
+    var spotifyToken;
 
-  }
+    try {
+      spotifyToken = window.location.hash.split('&')[0].split('=')[1];
+    } catch (e) {
 
-  if (!spotifyToken) {
-    window.location.href= 'login.html';
-  }
-
-  $.ajax({
-    method: 'GET',
-    url: 'https://api.spotify.com/v1/users/122571961/playlists/0zcrv3jFfvWR6xon5TXivZ',
-    headers: {
-      Authorization: 'Bearer ' + spotifyToken
     }
-  }).done(function(data) {
-    console.log('playlist data', data);
-    $('#playlist-name').text(`${data.name} (${data.tracks.total} Tracks)`);
-    
-  });
 
-  $.ajax({
-    method: 'GET',
-    url: 'https://api.spotify.com/v1/me/top/tracks',
-    headers: {
-      Authorization: 'Bearer ' + spotifyToken
+    if (!spotifyToken) {
+      window.location.href = 'login.html';
     }
-  }).done(function(data) {
-    console.log('top data', data);
-   var tracks = data.items.map(track => `
-      <li>
-          <a class="play" href=${track.uri}><i class="tiny material-icons">play_arrow</i></a>
-          <span class="add" data-uri="${track.uri}">${track.name} (${renderArtist(track.artists)}) <i class="tiny material-icons add-to-playlist">add</i></span>            
-      </li>`).join('\n');
-    $("#top").html(tracks);
-    Materialize.showStaggeredList('#top');
-    console.log(tracks);
 
-  })
-
-  $.ajax({
-    method: 'GET',
-    url: 'https://api.spotify.com/v1/me',
-    headers: {
-      Authorization: 'Bearer ' + spotifyToken
-    }
-  }).done(function(data) {
-    console.log('data', data);
-    $('#user').text(data.display_name);
-    $('#userimg').attr('src', data.images[0].url);
-  });
-
-  function renderArtist(artists) {
-    if (!artists || artists.length == 0) {
-      return '';
-    }
-    return artists.map(artist => artist.name).join(',');
-  }
-
-  $('#btn-follow').on('click', function(event) {
-    
     $.ajax({
-      method: 'PUT',
-      url: 'https://api.spotify.com/v1/users/122571961/playlists/0zcrv3jFfvWR6xon5TXivZ/followers',
+      method: 'GET',
+      url: 'https://api.spotify.com/v1/users/122571961/playlists/0zcrv3jFfvWR6xon5TXivZ',
       headers: {
         Authorization: 'Bearer ' + spotifyToken
       }
     }).done(function(data) {
-      console.log('following playlist!', data);
-      Materialize.toast('Following Playlist!', 4000)
-    });    
-  })
+      console.log('playlist data', data);
+      $('#playlist-name').text(`${data.name} (${data.tracks.total} Tracks)`);
 
-  $('#search').on('click', function(event) {
-    event.preventDefault();
+    });
+
     $.ajax({
       method: 'GET',
-      url: 'https://api.spotify.com/v1/search',
-      data: {
-        q: $('#query').val(),
-        type: 'track'
-      },
+      url: 'https://api.spotify.com/v1/me/top/tracks',
+      headers: {
+        Authorization: 'Bearer ' + spotifyToken
+      }
+    }).done(function(data) {
+      console.log('top data', data);
+      var tracks = data.items.map(track => `
+      <li>
+          <a class="play" href=${track.uri}><i class="tiny material-icons">play_arrow</i></a>
+          <span class="add" data-uri="${track.uri}">${track.name} (${renderArtist(track.artists)}) <i class="tiny material-icons add-to-playlist">add</i></span>            
+      </li>`).join('\n');
+      $("#top").html(tracks);
+      Materialize.showStaggeredList('#top');
+      console.log(tracks);
+
+    })
+
+    $.ajax({
+      method: 'GET',
+      url: 'https://api.spotify.com/v1/me',
       headers: {
         Authorization: 'Bearer ' + spotifyToken
       }
     }).done(function(data) {
       console.log('data', data);
+      Materialize.toast(`Welcome ${data.display_name}! Here's your most played tracks. Why don't you add them to the Rutgers Playlist? Or search for your favorite songs`, 5000);
 
-      var tracks = data.tracks.items.map(track => `
+      $('#user').text(data.display_name);
+      $('#userimg').attr('src', data.images[0].url);
+    });
+
+    function renderArtist(artists) {
+      if (!artists || artists.length == 0) {
+        return '';
+      }
+      return artists.map(artist => artist.name).join(',');
+    }
+
+    $('#btn-follow').on('click', function(event) {
+
+      $.ajax({
+        method: 'PUT',
+        url: 'https://api.spotify.com/v1/users/122571961/playlists/0zcrv3jFfvWR6xon5TXivZ/followers',
+        headers: {
+          Authorization: 'Bearer ' + spotifyToken
+        }
+      }).done(function(data) {
+        console.log('following playlist!', data);
+        Materialize.toast('Following Playlist!', 4000)
+      });
+    })
+
+    $('#search').on('click', function(event) {
+      event.preventDefault();
+      $.ajax({
+        method: 'GET',
+        url: 'https://api.spotify.com/v1/search',
+        data: {
+          q: $('#query').val(),
+          type: 'track'
+        },
+        headers: {
+          Authorization: 'Bearer ' + spotifyToken
+        }
+      }).done(function(data) {
+        console.log('data', data);
+
+        var tracks = data.tracks.items.map(track => `
         <li>
             <a class="play" href=${track.uri}><i class="tiny material-icons">play_arrow</i></a>
             <span class="add" data-uri="${track.uri}">${track.name} (${renderArtist(track.artists)}) <i class="tiny material-icons add-to-playlist">add</i></span>            
         </li>`).join('\n');
-      $("#tracks").html(tracks);
-      Materialize.showStaggeredList('#tracks');
-      console.log(tracks);
-    });
-  });
-
-
-  $(document).on('click', '.add', function(event) {
-    var uri = $(this).data('uri');
-    $.ajax({
-      method: 'POST',
-      url: 'https://api.spotify.com/v1/users/122571961/playlists/0zcrv3jFfvWR6xon5TXivZ/tracks?uris=' + encodeURIComponent([uri]),
-      headers: {
-        Authorization: 'Bearer ' + spotifyToken,
-      }
-    }).done(function(data) {
-      Materialize.toast('Added! It might take min to refresh the playlist. Or just refresh after a min.', 4000)
-      $('#spotifyplayer').attr('src', $('#spotifyplayer').attr('src'));
+        $("#tracks").html(tracks);
+        Materialize.showStaggeredList('#tracks');
+        console.log(tracks);
+      });
     });
 
 
+    $(document).on('click', '.add', function(event) {
+      var uri = $(this).data('uri');
+      $.ajax({
+        method: 'POST',
+        url: 'https://api.spotify.com/v1/users/122571961/playlists/0zcrv3jFfvWR6xon5TXivZ/tracks?uris=' + encodeURIComponent([uri]),
+        headers: {
+          Authorization: 'Bearer ' + spotifyToken,
+        }
+      }).done(function(data) {
+        Materialize.toast('Added! It might take min to refresh the playlist. Or just refresh after a min.', 4000)
+        $('#spotifyplayer').attr('src', $('#spotifyplayer').attr('src'));
+      });
+
+
+    })
   })
   </script>
 </body>
