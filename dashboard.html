@@ -189,12 +189,10 @@
       var uri = $(this).data('uri');
       $.ajax({
         method: 'POST',
-        contentType: "application/json",
+        contentType: "application/json; charset=utf-8",
         url: 'https://6mw9y37eg4.execute-api.us-east-1.amazonaws.com/prod/add-track',
         dataType: 'json',
-        data: {
-          uri: uri
-        },
+        data: JSON.stringify({uri: uri}),
         success: function() {
           Materialize.toast('Added! It might take min to refresh the playlist. Or just refresh after a min.', 4000)
           $('#spotifyplayer').attr('src', $('#spotifyplayer').attr('src'));
